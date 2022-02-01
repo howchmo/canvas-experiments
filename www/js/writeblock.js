@@ -1,4 +1,4 @@
-
+// $("#board").redraw();
 
 
 function draw_path( dp )
@@ -52,8 +52,8 @@ var bbx, bby = 0;
 if (writeblock && writeblock.getContext) {
 	wbctx = writeblock.getContext("2d");
 	// background
-	wbctx.fillStyle = "#F1F1F1";
-	wbctx.fillRect(0, 0, writeblock.width, writeblock.height);
+	// wbctx.fillStyle = "#F1F1F1";
+	// wbctx.fillRect(0, 0, writeblock.width, writeblock.height);
 }
 wbctx.strokeStyle = "red"
 wbctx.lineWidth = 5.0;
@@ -63,8 +63,8 @@ wbctx.lineJoin = "round";
 if (board && board.getContext) {
 	bbctx = board.getContext("2d");
 	// background
-	bbctx.fillStyle = "#F1F1F1";
-	bbctx.fillRect(0, 0, board.width, board.height);
+	// bbctx.fillStyle = "#F1F1F1";
+	// bbctx.fillRect(0, 0, board.width, board.height);
 }
 bbctx.strokeStyle = "green"
 bbctx.lineWidth = 1.0;
@@ -76,7 +76,7 @@ function sendArray( m )
 	socket.emit("message",m)
 }
 
-bs = 0.2;
+bs = 0.4;
 bbcsrx = 0;
 bbcsry = 0;
 function draw_start(evt)
