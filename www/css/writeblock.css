@@ -4,10 +4,11 @@ html, body {
 
 #container {
 	touch-action:none;
-	border: black 1px solid;
 }
 
 #board {
+	height:85%;
+	width:100%;
 	border: 1px #e1e1e1 solid;
 	box-shadow: 0px 0px 12px 2px #e1e1e1;
 	cursor: default !important;
@@ -21,4 +22,8 @@ html, body {
 	box-shadow: 0px 0px 12px 2px #e1e1e1;
 	cursor: default !important;
 	background-image: url('../assets/grid-zoomed.png');
+}
+
+#return-button {
+	height:25px;
 }

@@ -79,6 +79,7 @@ function sendArray( m )
 bs = 0.4;
 bbcsrx = 0;
 bbcsry = 0;
+linespacing = 36;
 function draw_start(evt)
 {
 		writeblock.style.cursor = 'default';
@@ -101,6 +102,13 @@ function draw_start(evt)
 		writeblock.addEventListener("touchend", draw_end, false);
 }
 
+function carriagereturn()
+{
+	shift();
+	bbcsry = bbcsry + linespacing;
+	bbcsrx = 0;
+}
+
 function draw_move(evt)
 {
 	if (wbctx && bbctx) {
@@ -108,6 +116,9 @@ function draw_move(evt)
 		bbctx.beginPath();
 		path.push({"x":x,"y":y})
 		wbctx.moveTo(x, y);
+		console.log(x*bs+bbcsrx);
+		if( (x*bs+bbcsrx) > (board.width - linespacing) )
+			carriagereturn()
 		bbctx.moveTo(x*bs+bbcsrx, y*bs+bbcsry);
 		newx = evt.offsetX ? evt.offsetX : (evt.pageX - evt.target.offsetLeft);
 		newy = evt.offsetY ? evt.offsetY : (evt.pageY - evt.target.offsetTop);
@@ -155,6 +166,11 @@ function shift()
 
 writeblock.onmousedown = draw_start;
 writeblock.addEventListener("touchstart",draw_start,false);
+
+$("#return-button").mouseup(function(event)
+{
+	carriagereturn();
+});
 	
 board.onmousewheel = function (event){
 	var wheel = event.wheelDelta/33;//n or -n
