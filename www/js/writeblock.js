@@ -5,7 +5,7 @@ var bcsrx = 0;
 var bcsry = 0;
 var linespacing = 20;
 var gridsize = 20;
-var gutteroffset = 0;
+var gutteroffset = 10;
 var leftgridoffset = gridsize/2;
 var gutter = 0;
 var endcap = 0;
@@ -42,11 +42,13 @@ formatgutterguide();
 console.log(gutter);
 
 // var boardendwidth = (writeblock.width - (board.width % writeblock.width));
-$("#mask").css({top: board.height+25});
+$("#mask").css({top: board.height+26});
+
+$("#writeblock-guide").css({width:writeblock.width});
 
 function formatgutterguide()
 {
-	$("#gutter").css({width: gutter*scale, top: board.height+25, left: scale*((writeblock.width)-gutter)+gutteroffset+leftgridoffset});
+	$("#gutter").css({width: gutter*scale, top: board.height+26, left: scale*((writeblock.width)-gutter)+gutteroffset+leftgridoffset-8});
 }
 
 function draw_start(evt)
@@ -124,6 +126,7 @@ function draw_end(evt)
 }
 function shift_writing()
 {
+	$("#writeblock-guide").css({left:bcsrx+8, top:bcsry+8});
 	var imageData = wbctx.getImageData(writeblock.width-leftgridoffset-endcap,0,leftgridoffset+endcap,writeblock.height);
 	wbctx.clearRect(0,0,writeblock.width,writeblock.height);
 	wbctx.putImageData(imageData,0,0);
