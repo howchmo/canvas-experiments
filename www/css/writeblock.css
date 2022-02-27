@@ -7,23 +7,47 @@ html, body {
 }
 
 #board {
-	height:85%;
+	height:100%-400px;
 	width:100%;
-	border: 1px #e1e1e1 solid;
+	/* border: 1px #e1e1e1 solid; */
 	box-shadow: 0px 0px 12px 2px #e1e1e1;
 	cursor: default !important;
-	background: url('../assets/grid.png');
-	background-size: 200%;
+	background: url('../assets/grid-min.png');
+	background-size: 40px 40px;
 }
 
-#write-block {
-	height:150px;
+#writeblock {
+	height:200px;
+	width: 100%;
 	border: 1px #e1e1e1 solid;
 	box-shadow: 0px 0px 12px 2px #e1e1e1;
 	cursor: default !important;
-	background-image: url('../assets/grid-zoomed.png');
+	background-image: url('../assets/grid-min.png');
+	background-size:200px 200px;
+	opacity:90%;
+	/* border: 1px solid blue; */
+}
+
+#gutter {
+	position:absolute;
+	height:200px;
+	border: 1px solid red;
+	background: red;
+	z-index:-10;
 }
 
 #return-button {
 	height:25px;
+}
+
+#mask {
+	position:absolute;
+	right:0px;
+	top: 0px;
+	width:0%;
+	height:200px;
+	background:white;
+	border: 1px solid white;
+	z-index=10;
+	visibility:hidden;
 }

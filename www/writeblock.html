@@ -5,9 +5,22 @@
 </head>
 <body>
 	<div id="container">
-			<canvas id="board"></canvas>
-			<div id="return-button">&nbsp;</div>
-			<canvas id="write-block"></canvas>
+			<div id="board-container">
+				<canvas id="board"></canvas>
+				<div id="writeblock-guide"></div>
+			</div>
+			<div id="buttons">
+				<div id="newline">&nbsp;</div>
+				<div id="move-left"></div>
+				<div id="move-right"></div>
+				<div id="insert-bullet"></div>
+			</div>
+			<div id="writeblock-container">
+				<canvas id="writeblock"></canvas>
+				<div id="gutter"></div>
+				<div id="mask"></div>
+			</div>
+			
 	</div>
 	<script type="text/javascript" src="js/writeblock.js"></script>
 </body>
