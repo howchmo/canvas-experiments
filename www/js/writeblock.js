@@ -1,16 +1,19 @@
-var scale = 5.0;
+var scale = 3.5;
 var zoom = 1.0;
 var boardscale = 1.0/scale;
 var bcsrx = 0;
 var bcsry = 0;
-var linespacing = 20;
-var gridsize = 20;
+var linespacing = 100/scale;
+var gridsize = 100/scale;
 var gutteroffset = 10;
 var leftgridoffset = gridsize/2;
 var gutter = 0;
 var endcap = 0;
 var spans = 0;
+var writeblock_guide_width = 0;
 
+$("#board").css({"background-size":($("#writeblock").height()/scale)});
+$("#writeblock-guide").css({"height":($("#writeblock").height()/scale)});
 var board = document.getElementById("board");
 var rect = board.getBoundingClientRect();
 board.width = window.innerWidth-2*rect.y;
@@ -24,7 +27,7 @@ bctx.lineJoin = "round";
 
 var writeblock = document.getElementById("writeblock");
 writeblock.width = (board.width)/scale
-writeblock.height = 40;
+writeblock.height = $("#writeblock").height()/scale;
 var wbctx = writeblock.getContext("2d");
 wbctx.strokeStyle = "red"
 wbctx.lineWidth = 1.0;
@@ -44,7 +47,8 @@ console.log(gutter);
 // var boardendwidth = (writeblock.width - (board.width % writeblock.width));
 $("#mask").css({top: board.height+26});
 
-$("#writeblock-guide").css({width:writeblock.width});
+writeblock_guide_width = writeblock.width;
+$("#writeblock-guide").css({width:writeblock_guide_width});
 
 function formatgutterguide()
 {
@@ -91,8 +95,8 @@ function draw_move(evt)
 		y = 1/zoom*newy;
 		bctx.lineTo(x*boardscale+bcsrx, y*boardscale+bcsry);
 		bctx.stroke();
-		bctx.stroke();
 		document.getElementById("writeblock").style.cursor = 'default !important';
+		wbctx.clearRect(0,0,writeblock.width,writeblock.height);
 		wbctx.drawImage(board,bcsrx,bcsry,writeblock.width,writeblock.height,0,0,writeblock.width,writeblock.height);
 	}
 }
@@ -108,6 +112,7 @@ function draw_end(evt)
 		console.log("board.width = "+board.width);
 		if( bcsrx > (board.width - 15) )
 		{
+			bcsry = bcsry + linespacing;
 			carriage_return();
 		}
 		else
@@ -116,6 +121,7 @@ function draw_end(evt)
 			console.log("board.width-writeblock.width = "+(board.width-writeblock.width));
 			if( bcsrx > board.width-writeblock.width )
 			{
+				writeblock_guide_width = (board.width-writeblock.width);
 				gutter = bcsrx - (board.width-writeblock.width)+leftgridoffset;
 				console.log("gutter = "+gutter);
 				formatgutterguide();
@@ -126,7 +132,7 @@ function draw_end(evt)
 }
 function shift_writing()
 {
-	$("#writeblock-guide").css({left:bcsrx+8, top:bcsry+8});
+	$("#writeblock-guide").css({left:bcsrx+8, top:bcsry+8, "width":writeblock_guide_width});
 	var imageData = wbctx.getImageData(writeblock.width-leftgridoffset-endcap,0,leftgridoffset+endcap,writeblock.height);
 	wbctx.clearRect(0,0,writeblock.width,writeblock.height);
 	wbctx.putImageData(imageData,0,0);
@@ -135,7 +141,7 @@ function shift_writing()
 
 function carriage_return()
 {
-	bcsry = bcsry + linespacing;
+	writeblock_guide_width = writeblock.width;
 	bcsrx = 0;
 	gutter = gutteroffset + endcap;
 	formatgutterguide();
@@ -144,6 +150,49 @@ function carriage_return()
 }
 
 // wbctx.drawImage(board,0,0,scale*writeblock.width,scale*scale*writeblock.height);
+$("#newline").mouseup(function(event)
+{
+	bcsry = bcsry + linespacing;
+	carriage_return();
+});
+
+$("#oldline").mouseup(function(event)
+{
+	if( bcsry != 0 )
+	{
+		bcsry = bcsry - linespacing;
+		carriage_return();
+	}
+});
+
+$("#move-left").mouseup(function(event)
+{
+	if( bcsrx != 0 )
+	{
+		bcsrx -= writeblock.width-leftgridoffset-endcap
+		shift_writing();
+	}
+});
+
+$("#erase").mouseup(function(event)
+{
+	bctx.globalCompositeOperation = 'destination-out';
+	bctx.lineWidth = 5;
+});
+
+function change_pen_color( color )
+{
+	bctx.globalCompositeOperation = 'source-over';
+	bctx.lineWidth = 1;
+	bctx.strokeStyle = color;
+}
+
+$("#black-pen").mouseup( function(event) { change_pen_color("black"); } );
+$("#blue-pen").mouseup( function(event) { change_pen_color("blue"); } );
+$("#red-pen").mouseup( function(event) { change_pen_color("red"); } );
+$("#green-pen").mouseup( function(event) { change_pen_color("green"); } );
 
 writeblock.onmousedown = draw_start;
 writeblock.addEventListener("touchstart",draw_start,false);
+
+

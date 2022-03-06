@@ -48,10 +48,6 @@ html, body {
 	z-index:-10;
 }
 
-#return-button {
-	height:25px;
-}
-
 #mask {
 	position:absolute;
 	right:0px;
@@ -63,3 +59,54 @@ html, body {
 	z-index=10;
 	visibility:hidden;
 }
+
+.button {
+	border: 1px solid black;
+	width: 120px;
+	float:left;
+	height:15px;
+}
+
+.small {
+	width:40px;
+}
+
+#newline {
+	background:grey;
+	float:right;
+}
+
+#oldline {
+	background:darkgrey;
+	float:right;
+}
+
+#move-left {
+	background:pink;
+}
+
+#erase {
+	background:lightblue;
+}
+
+#insert-bullet {
+	text-align:center;
+}
+
+#black-pen {
+	background:black;
+}
+
+#blue-pen {
+	background:blue;
+}
+
+#red-pen {
+	background:red;
+}
+
+#green-pen {
+	background:green;
+}
+
+
