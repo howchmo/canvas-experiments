@@ -81,6 +81,13 @@ html, body {
 	float:right;
 }
 
+#save {
+	text-align:center;
+	font-weight:bold;
+	font-size:80%;
+	margin-left:100px;
+}
+
 #move-left {
 	background:pink;
 }

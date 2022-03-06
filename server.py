@@ -1,8 +1,16 @@
-from flask import Flask
+from flask import Flask, redirect
 from flask_socketio import SocketIO,send
 from engineio.payload import Payload
+import uuid;
 
 app = Flask(__name__, static_folder='www', static_url_path='' )
+
+@app.route("/")
+def start():
+	id = uuid.uuid1()
+	print("id = "+str(id))
+	return redirect(f"/writeblock.html#{id}")
+
 # app.config['SECRET_KEY'] = 'mysecret'
 app.debug=True
 app.host = '0.0.0.0'
