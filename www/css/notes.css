@@ -1,0 +1,50 @@
+body {
+	background:url('../assets/grid-min-dark.png');
+}
+
+#notes-list {
+
+}
+
+.note {
+	height:250px;
+	width:calc(100%-5px);
+	border: 3px grey solid;
+	margin:3px;
+}
+
+.note-rep {
+	height:100%;
+	width:100%;
+	object-fit: contain;
+	background-repeat: no-repeat !important;
+}
+
+.note-date {
+	position:relative;
+	color:grey;
+	bottom:80px;
+	float:right;
+	right:20px;
+	font-weight:bold;
+	font-size:48pt;
+	opacity: 75%;
+}
+
+#header {
+	height:134px;
+}
+
+#header-title {
+	color:white;
+	font: bold italic 84pt serif;
+}
+
+#header-new-note-button {
+	height:125px;
+	width:125px;
+	border: 4px green solid;
+	float:right;
+	font-size:72pt;
+	text-align:center;
+}

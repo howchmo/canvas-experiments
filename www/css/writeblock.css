@@ -1,119 +1,155 @@
-html, body {
-	touch-action: none;
+html, body
+{
+	touch-action:none;
+	overflow:hidden;
+	user-select: none;
+	background: powderblue;
 }
 
-#container {
-	touch-action:none;
+.box
+{
+	display:flex;
+	border:black 1px solid;
+	height:100%;
 }
 
 #board {
-	height:100%-400px;
+	background: url('../assets/grid-min-dark.png');
+	background-size:80px;
 	width:100%;
-	/* border: 1px #e1e1e1 solid; */
-	box-shadow: 0px 0px 12px 2px #e1e1e1;
-	cursor: default !important;
-	background: url('../assets/grid-min.png');
-	background-size: 40px 40px;
-	opacity:90%;
+	height:100%;
 }
 
 #writeblock-guide {
 	position:absolute;
-	height:40px;
-	width:100px;
-	border: 1px solid red;
-	background: red;
-	z-index:-10;
 	top:8px;
 	left:8px;
+	height:80px;
+	width:20%;
+	background: powderblue;
+	opacity:50%;
+}
+
+#writer {
+	position:fixed;
+	height:500px;
+	width: 100%;
+	bottom:0px;
+}
+
+#buttons
+{
+	height:100px;
+	width:100%;
+	background:yellow;
 }
 
 #writeblock {
-	height:200px;
-	width: 100%;
-	border: 1px #e1e1e1 solid;
-	box-shadow: 0px 0px 12px 2px #e1e1e1;
-	cursor: default !important;
-	background-image: url('../assets/grid-min.png');
-	background-size:200px 200px;
-	opacity:90%;
-	/* border: 1px solid blue; */
+	position:absolute;
+	background-image: url('../assets/grid-min-dark.png');
+	background-size: 400px 400px;
+	height:400px;
+	width:100%;
+	left:0px;
+	bottom:0px;
+	opacity:85%;
 }
 
 #gutter {
+	border: 2px red dashed;
 	position:absolute;
-	height:200px;
-	border: 1px solid red;
-	background: red;
-	z-index:-10;
+	width:100px;
+	height:400px;
+	background:darkblue;
+	opacity:50%;
+	right:0px;;
+	bottom:0px;
 }
 
 #mask {
 	position:absolute;
-	right:0px;
-	top: 0px;
-	width:0%;
-	height:200px;
+	width:1200px;
+	height:400px;
 	background:white;
-	border: 1px solid white;
-	z-index=10;
-	visibility:hidden;
+	bottom:0px;
+	right:0px;
+	opacity:100%;
+	visibility: hidden;
 }
 
-.button {
-	border: 1px solid black;
-	width: 120px;
+#backspace {
 	float:left;
-	height:15px;
+	width:100px;
+	line-height:90%;
+	font-size:90px;
 }
 
-.small {
-	width:40px;
+#carriagereturn {
+	float:left;
 }
 
-#newline {
-	background:grey;
+#up {
+	float:left;
+}
+
+.pen {
 	float:right;
+	font-size:70px !important;
+	line-height:120% !important;
 }
 
-#oldline {
-	background:darkgrey;
-	float:right;
-}
-
-#save {
-	text-align:center;
-	font-weight:bold;
-	font-size:80%;
-	margin-left:100px;
-}
-
-#move-left {
-	background:pink;
-}
-
-#erase {
-	background:lightblue;
-}
-
-#insert-bullet {
-	text-align:center;
-}
-
-#black-pen {
+#black {
 	background:black;
 }
 
-#blue-pen {
-	background:blue;
+#blue {
+	background: blue;
+	float:right;
 }
 
-#red-pen {
-	background:red;
+#red {
+	background: red;
+	float:right;
 }
 
-#green-pen {
-	background:green;
+#green {
+	background: green;
+	float:right;
 }
 
+#clear {
+	background: lightgrey;
+	float:right;
+}
 
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari, Chrome, Opera, Samsung */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Edge, IE */
+  user-select: none; /* Modern browsers */
+}
+
+.button {
+	display:inline-block;
+	border: 3px white solid;
+	width:100px;
+	height:100%;
+	line-height:80%;
+	background:black;
+	text-align:center;
+	font-size:100px;
+	color:white;
+	font-weight:bold;
+}
+
+#save {
+	float: right;
+	background:yellow;
+	color:black;
+	border: 3px black solid;
+	margin-right:15px;
+	font-size:70px;
+	line-height:140%;
+}

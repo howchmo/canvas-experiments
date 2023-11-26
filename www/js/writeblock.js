@@ -1,58 +1,49 @@
-var scale = 3.5;
-var zoom = 1.0;
-var boardscale = 1.0/scale;
-var bcsrx = 0;
-var bcsry = 0;
-var linespacing = 100/scale;
-var gridsize = 100/scale;
-var gutteroffset = 10;
-var leftgridoffset = gridsize/2;
-var gutter = 0;
-var endcap = 0;
-var spans = 0;
-var writeblock_guide_width = 0;
+// var id = window.location.href.split("#")[1]
 
-$("#board").css({"background-size":($("#writeblock").height()/scale)});
-$("#writeblock-guide").css({"height":($("#writeblock").height()/scale)});
+var scale = 5.0;
+var zoom = 1.0;
+var boardscale = zoom/scale;
+var board_cursor_x = 0;
+var board_cursor_y = 0;
+var gridsize = 100/scale/2;
+console.log("gridsize = "+gridsize);
+
 var board = document.getElementById("board");
 var rect = board.getBoundingClientRect();
 board.width = window.innerWidth-2*rect.y;
-board.height = window.innerHeight*0.8;
-console.log("board("+rect.x+", "+rect.y+", "+board.width+","+board.height+")");
-var bctx = board.getContext("2d");
-bctx.strokeStyle = "blue"
-bctx.lineWidth = 1.0;
-bctx.lineCap = "round";
-bctx.lineJoin = "round";
+board.height = window.innerHeight;
+console.log("board .height = "+board.height);
+var board_context = board.getContext("2d");
+board_context.lineWidth = 1.0;
+board_context.lineCap = "round";
+board_context.lineJoin = "round";
 
 var writeblock = document.getElementById("writeblock");
-writeblock.width = (board.width)/scale
-writeblock.height = $("#writeblock").height()/scale;
-var wbctx = writeblock.getContext("2d");
-wbctx.strokeStyle = "red"
-wbctx.lineWidth = 1.0;
-wbctx.lineCap = "round";
-wbctx.lineJoin = "round";
+var writeblock_context = writeblock.getContext("2d");
+var writeblock_guide = $("#writeblock_guide");
+writeblock.width = board.width/scale;
+console.log("writeblock .height = "+writeblock.height);
+// writeblock.height = 2*writeblock.height/scale
+console.log("writeblock .height = "+writeblock.height);
+var leftgridoffset = gridsize/2;
+var rightgridoffset = (writeblock.width-leftgridoffset) % gridsize;
+var default_gutter_width = $("#gutter").width();
+var gutter_width = default_gutter_width;
 
-console.log(writeblock.width);
+var current_color = "white";
+var erasing = false;
 
-endcap = (writeblock.width-leftgridoffset) % gridsize;
-console.log("endcap = "+endcap);
+var x = 0;
+var y = 0;
 
-gutter = gutteroffset + endcap;
-console.log("gutter = "+gutter);
-formatgutterguide();
-console.log(gutter);
-
-// var boardendwidth = (writeblock.width - (board.width % writeblock.width));
-$("#mask").css({top: board.height+26});
-
-writeblock_guide_width = writeblock.width;
-$("#writeblock-guide").css({width:writeblock_guide_width});
-
-function formatgutterguide()
+function load_image()
 {
-	$("#gutter").css({width: gutter*scale, top: board.height+26, left: scale*((writeblock.width)-gutter)+gutteroffset+leftgridoffset-8});
+	var image = new Image();
+	image.onload = function() {
+		board_context.drawImage(image,0,0);
+		writeblock_context.drawImage(board,board_cursor_x,board_cursor_y,writeblock.width,writeblock.height,0,0,writeblock.width,writeblock.height*1.9);
+	};
+	image.src = "/retrieve/"+id;
 }
 
 function draw_start(evt)
@@ -67,21 +58,27 @@ function draw_start(evt)
 			t = touches[0]
 			x = t.offsetX ? t.offsetX : (t.pageX - evt.target.offsetLeft);
 			y = t.offsetY ? t.offsetY : (t.pageY - evt.target.offsetTop);
+		y = y-1200;
 		}
-		x = 1/zoom*x;
-		y = 1/zoom*y;
+		x = x;
+		y = y;
 		// do not register if right mouse button is pressed.
-		writeblock.addEventListener("mousemove", draw_move, false);
+		// writeblock.addEventListener("mousemove", draw_move, false);
+		// writeblock.addEventListener("mouseup", draw_end, false);
 		writeblock.addEventListener("touchmove", draw_move, false);
-		writeblock.addEventListener("mouseup", draw_end, false);
 		writeblock.addEventListener("touchend", draw_end, false);
 }
 
 function draw_move(evt)
 {
-	if (wbctx && bctx) {
-		bctx.beginPath();
-		bctx.moveTo(x*boardscale+bcsrx, y*boardscale+bcsry);
+	if (writeblock_context && board_context)
+	{
+		board_context.beginPath();
+		if( erasing == true )
+			board_context.globalCompositeOperation="destination-out";
+		else
+			board_context.globalCompositeOperation="source-over";
+		board_context.moveTo(x*boardscale+board_cursor_x, y*boardscale+board_cursor_y);
 		newx = evt.offsetX ? evt.offsetX : (evt.pageX - evt.target.offsetLeft);
 		newy = evt.offsetY ? evt.offsetY : (evt.pageY - evt.target.offsetTop);
 		touches = evt.changedTouches;
@@ -90,109 +87,197 @@ function draw_move(evt)
 			t = touches[0]
 			newx = t.offsetX ? t.offsetX : (t.pageX - evt.target.offsetLeft);
 			newy = t.offsetY ? t.offsetY : (t.pageY - evt.target.offsetTop);
+			newy = newy - 1200;
 		}
-		x = 1/zoom*newx;
-		y = 1/zoom*newy;
-		bctx.lineTo(x*boardscale+bcsrx, y*boardscale+bcsry);
-		bctx.stroke();
-		document.getElementById("writeblock").style.cursor = 'default !important';
-		wbctx.clearRect(0,0,writeblock.width,writeblock.height);
-		wbctx.drawImage(board,bcsrx,bcsry,writeblock.width,writeblock.height,0,0,writeblock.width,writeblock.height);
+		x = newx;
+		y = newy;
+		var bx = newx*boardscale+board_cursor_x;
+		var by = newy*boardscale+board_cursor_y;
+		board_context.lineTo(bx, by);
+		board_context.stroke();
+		writeblock.style.cursor = 'default !important';
+		writeblock_context.clearRect(0,0,writeblock.width,writeblock.height);
+		writeblock_context.drawImage(board,board_cursor_x,board_cursor_y,writeblock.width,writeblock.height,0,0,writeblock.width,writeblock.height*1.9);
+		board_context.closePath();
 	}
 }
 
+function calc_new_board_cursor_x( multiplier )
+{
+	num_grids = Math.floor(writeblock.width/gridsize);
+	console.log("num_grids = "+num_grids);
+	// I have no idea why I need this 3 here
+	board_cursor_x += multiplier * (num_grids-3)*gridsize;
+	return( board_cursor_x );
+}
+
+function calc_new_board_cursor_y( multiplier )
+{
+	// num_grids = Math.floor(writeblock.height/gridsize);
+	board_cursor_y += multiplier * 4*gridsize;
+	return( board_cursor_y );
+}
+
+time = 0
 function draw_end(evt)
 {
-	writeblock.removeEventListener("mousemove", draw_move, false);
-	writeblock.removeEventListener("touchmove", draw_move, false);
-	if( x/scale > writeblock.width-gutter)
+	if (writeblock_context && board_context)
 	{
-		bcsrx += writeblock.width-leftgridoffset-endcap;
-		console.log("bcsrx = "+bcsrx);
-		console.log("board.width = "+board.width);
-		if( bcsrx > (board.width - 15) )
+		board_context.beginPath();
+		if( erasing == true )
+			board_context.globalCompositeOperation="destination-out";
+		else
+			board_context.globalCompositeOperation="source-over";
+		board_context.moveTo(x*boardscale+board_cursor_x, y*boardscale+board_cursor_y);
+		newx = evt.offsetX ? evt.offsetX : (evt.pageX - evt.target.offsetLeft);
+		newy = evt.offsetY ? evt.offsetY : (evt.pageY - evt.target.offsetTop);
+		touches = evt.changedTouches;
+		if( touches )
 		{
-			bcsry = bcsry + linespacing;
-			carriage_return();
+			t = touches[0]
+			newx = t.offsetX ? t.offsetX : (t.pageX - evt.target.offsetLeft);
+			newy = t.offsetY ? t.offsetY : (t.pageY - evt.target.offsetTop);
+			newy = newy - 1200;
+		}
+		x = newx;
+		y = newy;
+		var bx = newx*boardscale+board_cursor_x;
+		var by = newy*boardscale+board_cursor_y;
+		board_context.fillStyle = current_color;
+		board_context.fillRect(bx, by, 2, 2);
+		writeblock.style.cursor = 'default !important';
+		writeblock_context.clearRect(0,0,writeblock.width,writeblock.height);
+		writeblock_context.drawImage(board,board_cursor_x,board_cursor_y,writeblock.width,writeblock.height,0,0,writeblock.width,writeblock.height*1.9);
+		board_context.closePath();
+	}
+
+	writeblock.addEventListener("touchend", draw_end, false);
+	writeblock.removeEventListener("touchmove", draw_move, false);
+	console.log("x="+x+" ?> "+writeblock.width*scale+" - "+gutter_width);
+	if( x > writeblock.width*scale-gutter_width)
+	{
+		board_cursor_x = calc_new_board_cursor_x(1);
+		console.log("board_cursor_x = "+board.width);
+		if( board_cursor_x > (board.width - gutter_width) )
+		{
+			down();
 		}
 		else
 		{
 			shift_writing();
 			console.log("board.width-writeblock.width = "+(board.width-writeblock.width));
-			if( bcsrx > board.width-writeblock.width )
+			if( board_cursor_x > board.width-writeblock.width )
 			{
-				writeblock_guide_width = (board.width-writeblock.width);
-				gutter = bcsrx - (board.width-writeblock.width)+leftgridoffset;
-				console.log("gutter = "+gutter);
-				formatgutterguide();
-				$("#mask").css({visibility:"visible", width: (gutter-leftgridoffset)*scale});
+				console.log("gutter_width = "+gutter_width);
+				format_gutter();
+				var mask_width = writeblock.width*scale - scale*(board.width - board_cursor_x);
+				$("#mask").css({visibility:"visible", width: mask_width});
 			}
 		}
 	}
 }
+
+function format_gutter()
+{
+	var gutteroffset = 0;
+	var leftover = board.width - board_cursor_x;
+	console.log("leftover = "+leftover);
+	console.log("writeblock.width = "+writeblock.width*scale);
+	gutter_width = writeblock.width*scale - leftover*scale + 100;
+	$("#gutter").css({width:gutter_width});
+}
+
 function shift_writing()
 {
-	$("#writeblock-guide").css({left:bcsrx+8, top:bcsry+8, "width":writeblock_guide_width});
-	var imageData = wbctx.getImageData(writeblock.width-leftgridoffset-endcap,0,leftgridoffset+endcap,writeblock.height);
-	wbctx.clearRect(0,0,writeblock.width,writeblock.height);
-	wbctx.putImageData(imageData,0,0);
-	wbctx.drawImage(board,bcsrx,bcsry,writeblock.width,writeblock.height,0,0,writeblock.width,writeblock.height);
+		$("#writeblock-guide").css({left:board_cursor_x+8, top:board_cursor_y+8, "width":$("#writeblock-guide").width()});
+		writeblock_context.clearRect(0,0,writeblock.width,writeblock.height);
+		var imageData = writeblock_context.getImageData(writeblock.width-leftgridoffset-rightgridoffset,0,leftgridoffset+rightgridoffset,writeblock.height);
+		writeblock_context.putImageData(imageData,0,0);
+		writeblock_context.drawImage(board,board_cursor_x,board_cursor_y,writeblock.width,writeblock.height,0,0,writeblock.width,writeblock.height*1.9);
 }
 
-function carriage_return()
+function down()
 {
-	writeblock_guide_width = writeblock.width;
-	bcsrx = 0;
-	gutter = gutteroffset + endcap;
-	formatgutterguide();
+	board_cursor_x = 0;
+	board_cursor_y = calc_new_board_cursor_y(1);
 	shift_writing();
-	$("#mask").css({visibility:"hidden"});
+	reset_writeblock();
 }
 
-// wbctx.drawImage(board,0,0,scale*writeblock.width,scale*scale*writeblock.height);
-$("#newline").mouseup(function(event)
+function reset_writeblock()
 {
-	bcsry = bcsry + linespacing;
-	carriage_return();
-});
+	$("#mask").css({visibility:"hidden"});
+	gutter_width = default_gutter_width;
+	$("#gutter").css({width:gutter_width});
+}
 
-$("#oldline").mouseup(function(event)
+function up()
 {
-	if( bcsry != 0 )
-	{
-		bcsry = bcsry - linespacing;
-		carriage_return();
-	}
-});
+	board_cursor_y = calc_new_board_cursor_y(-1);
+	shift_writing();
+}
 
-$("#move-left").mouseup(function(event)
+function backspace( evt )
 {
-	if( bcsrx != 0 )
+	if( board_cursor_x != 0 )
 	{
-		bcsrx -= writeblock.width-leftgridoffset-endcap
+		board_cursor_x = calc_new_board_cursor_x(-1);
 		shift_writing();
 	}
-});
-
-$("#erase").mouseup(function(event)
-{
-	bctx.globalCompositeOperation = 'destination-out';
-	bctx.lineWidth = 5;
-});
-
-function change_pen_color( color )
-{
-	bctx.globalCompositeOperation = 'source-over';
-	bctx.lineWidth = 1;
-	bctx.strokeStyle = color;
+	reset_writeblock();
 }
 
-$("#black-pen").mouseup( function(event) { change_pen_color("black"); } );
-$("#blue-pen").mouseup( function(event) { change_pen_color("blue"); } );
-$("#red-pen").mouseup( function(event) { change_pen_color("red"); } );
-$("#green-pen").mouseup( function(event) { change_pen_color("green"); } );
+function set_pen_color( c )
+{
+	console.log(c);
+	current_color = c;
+	board_context.strokeStyle = current_color;
+	if( erasing )
+		board_context.lineWidth = 6;
+	else
+		board_context.lineWidth = 2;
+}
+set_pen_color(current_color);
 
-writeblock.onmousedown = draw_start;
-writeblock.addEventListener("touchstart",draw_start,false);
+function save_image()
+{
+	url = board.toDataURL();
+	$.ajax({
+		type: "POST",
+		url: "/save/"+id,
+		data:{
+			imageBase64: url
+		}
+	}).done(function() {
+		console.log('sent');
+	});
+}
+
+$("#save").mouseup(save_image);
+
+$("#backspace").mouseup(backspace);
+$("#carriagereturn").mouseup(down);
+$("#up").mouseup(up);
+$(".pen#black").mouseup(function( e ) { erasing = false; set_pen_color("white"); } );
+$(".pen#blue").mouseup(function( e ) { erasing = false; set_pen_color("blue"); } );
+$(".pen#red").mouseup(function( e ) { erasing = false; set_pen_color("red"); } );
+$(".pen#green").mouseup(function( e ) { erasing = false; set_pen_color("green"); } );
+$(".pen#clear").mouseup(function( e ) { erasing = true; set_pen_color("white"); } );
+
+var writer = document.getElementById("writer");
+writer.onmousedown = draw_start;
+writer.addEventListener("touchstart",draw_start,false);
+// I am doing this as a total hack to make this work
+// otheruise it has the strange behavor where I can
+// never return to the color it started out with
+set_pen_color("black");
+board_context.beginPath();
+board_context.moveTo(0,0);
+board_context.lineTo(1,1);
+board_context.stroke();
+board_context.closePath();
+set_pen_color("white");
+
+load_image();
 
 

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/writeblock.css') }}"/>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-latest.pack.js"></script>
+</head>
+<body class="noselect">
+	<canvas id="board"> </canvas>
+	<div id="writeblock-guide"></div>
+	<div id="writer">
+		<div id="buttons">
+			<span class="button" id="backspace">&larr;</span>
+			<span class="button" id="carriagereturn">&#8629;</span>
+			<span class="button" id="up">&uarr;</span>
+
+			<span class="button pen" id="black">&#9998;</span>
+			<span class="button pen" id="blue">&#9998;</span>
+			<span class="button pen" id="red">&#9998;</span>
+			<span class="button pen" id="green">&#9998;</span>
+			<span class="button pen" id="clear">&#9998;</span>
+
+			<span class="button" id="save">&#128190;</span>
+		</div>
+		<div id="gutter"></div>
+		<canvas id="writeblock"></canvas>
+		<div id="mask"></div>
+	</div>
+	<script>
+		var id = "{{ id }}";
+	</script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/writeblock.js') }}"></script>
+</body>
+</html>
