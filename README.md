@@ -12,3 +12,7 @@ things:
   canvas and automatically shifts as you reach the end of the block
   (need a video)
 
+## UPDATE
+
+This has a achieved a MVP for a handwritten note-taking app that runs***very specifically*** on the iPhone using mobile Safari.
+
