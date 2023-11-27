@@ -202,6 +202,13 @@ function down()
 	board_cursor_y = calc_new_board_cursor_y(1);
 	shift_writing();
 	reset_writeblock();
+	save_image();
+}
+
+function cr()
+{
+	down();
+	save_image();
 }
 
 function reset_writeblock()

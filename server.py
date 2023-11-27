@@ -32,11 +32,10 @@ def notes():
 def new_note():
 	id = uuid.uuid1()
 	print("/note/"+str(id))
-	return redirect("/note/"+str(id))
+	return redirect("/note/"+str(id)+".png")
 
 @app.route("/note/<id>")
 def note(id):
-
 	return render_template("note.html", id=id)
 
 @app.route("/retrieve/<id>")
@@ -52,7 +51,7 @@ def save(id):
 	print(str(request))
 	image_data = re.sub('^data:image/.+;base64,', '', request.form['imageBase64'])
 	im = Image.open(BytesIO(base64.b64decode(image_data)))
-	im.save("www/notes/"+str(id)+'.png')
+	im.save("www/notes/"+str(id))
 	return json.dumps({'result': 'success'}), 200, {'ContentType': 'application/json'}
 
 
@@ -61,6 +60,6 @@ app.debug=True
 app.host = '0.0.0.0'
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0', port=5000)
+	app.run(host='0.0.0.0', port=4444)
 
 
