@@ -9,13 +9,13 @@ import os.path
 from datetime import datetime
 from tzlocal import get_localzone
 
-app = Flask(__name__, static_folder='www', static_url_path='' )
+app = Flask(__name__, static_folder='www', static_url_path='/wrtrw/www/' )
 
-@app.route("/")
+@app.route("/wrtrw/")
 def notes_list_page():
 	return render_template("notes.html")
 
-@app.route("/notes")
+@app.route("/wrtrw/notes")
 def notes():
 	result = {}
 	directory = 'www/notes/'
@@ -28,17 +28,17 @@ def notes():
 		result[dt] = f
 	return result
 
-@app.route("/note")
+@app.route("/wrtrw/note")
 def new_note():
 	id = uuid.uuid1()
 	print("/note/"+str(id))
-	return redirect("/note/"+str(id)+".png")
+	return redirect("/wrtrw/note/"+str(id)+".png")
 
-@app.route("/note/<id>")
+@app.route("/wrtrw/note/<id>")
 def note(id):
 	return render_template("note.html", id=id)
 
-@app.route("/retrieve/<id>")
+@app.route("/wrtrw/retrieve/<id>")
 def retrieve(id):
 	filepath = "www/notes/"+str(id);
 	if os.path.isfile(filepath):
@@ -46,7 +46,7 @@ def retrieve(id):
 	else:
 		return "", 404
 
-@app.route("/save/<id>", methods=['POST'])
+@app.route("/wrtrw/save/<id>", methods=['POST'])
 def save(id):
 	print(str(request))
 	image_data = re.sub('^data:image/.+;base64,', '', request.form['imageBase64'])
@@ -61,5 +61,4 @@ app.host = '0.0.0.0'
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=4444)
-
 

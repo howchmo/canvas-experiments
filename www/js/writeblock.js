@@ -43,7 +43,7 @@ function load_image()
 		board_context.drawImage(image,0,0);
 		writeblock_context.drawImage(board,board_cursor_x,board_cursor_y,writeblock.width,writeblock.height,0,0,writeblock.width,writeblock.height*1.9);
 	};
-	image.src = "/retrieve/"+id;
+	image.src = "/wrtrw/retrieve/"+id;
 }
 
 function draw_start(evt)
@@ -251,7 +251,7 @@ function save_image()
 	url = board.toDataURL();
 	$.ajax({
 		type: "POST",
-		url: "/save/"+id,
+		url: "/wrtrw/save/"+id,
 		data:{
 			imageBase64: url
 		}
